@@ -82,6 +82,24 @@ pub struct HelpReason {
     pub solution: &'static str,
 }
 
+/// Faixa de ação de um sistema antifraude, conforme a pontuação de risco combinada.
+#[derive(Clone, Copy, PartialEq)]
+pub enum FraudRiskLevel {
+    Normal,
+    Monitoring,
+    Verification,
+    Blocked,
+}
+
+/// Um fator individual avaliado de forma independente pelo sistema de análise de risco
+/// (defesa em profundidade: nenhum sinal isolado decide sozinho).
+#[derive(Clone, PartialEq)]
+pub struct FraudSignal {
+    pub label: &'static str,
+    pub detail: &'static str,
+    pub ok: bool,
+}
+
 pub fn services() -> Vec<Service> {
     vec![
         Service {
@@ -459,6 +477,64 @@ pub fn help_reasons() -> Vec<HelpReason> {
             icon: "🗣️",
             label: "Preciso falar com uma pessoa",
             solution: "Ligue para a Central 0800 000 0000 ou procure um dos postos de atendimento presencial listados abaixo.",
+        },
+    ]
+}
+
+/// Pontuação de risco simulada (0-100), combinando vários sinais independentes —
+/// nunca uma regra única decide sozinha se a conta é suspeita.
+pub fn fraud_risk_score() -> i32 {
+    34
+}
+
+/// Classifica a pontuação em uma faixa de ação, como em um sistema antifraude real.
+pub fn fraud_level(score: i32) -> FraudRiskLevel {
+    match score {
+        0..=30 => FraudRiskLevel::Normal,
+        31..=60 => FraudRiskLevel::Monitoring,
+        61..=80 => FraudRiskLevel::Verification,
+        _ => FraudRiskLevel::Blocked,
+    }
+}
+
+/// Sinais independentes que compõem a pontuação de risco (comportamento, tentativas de
+/// burlar regras, velocidade, múltiplas contas, inconsistências, abuso e automação).
+pub fn fraud_signals() -> Vec<FraudSignal> {
+    vec![
+        FraudSignal {
+            label: "Comportamento de navegação",
+            detail: "Padrão de uso compatível com seu histórico nos últimos 90 dias.",
+            ok: true,
+        },
+        FraudSignal {
+            label: "Tentativas de burlar regras",
+            detail: "Nenhuma tentativa de contornar verificação de identidade detectada.",
+            ok: true,
+        },
+        FraudSignal {
+            label: "Velocidade das ações",
+            detail: "Ritmo de preenchimento mais rápido que o normal nesta sessão.",
+            ok: false,
+        },
+        FraudSignal {
+            label: "Múltiplas contas",
+            detail: "Apenas 1 conta gov.br associada a este CPF.",
+            ok: true,
+        },
+        FraudSignal {
+            label: "Consistência dos dados",
+            detail: "Nenhuma divergência entre dados cadastrais e uso da conta.",
+            ok: true,
+        },
+        FraudSignal {
+            label: "Histórico de abuso",
+            detail: "Nenhum registro de bloqueio ou penalidade anterior.",
+            ok: true,
+        },
+        FraudSignal {
+            label: "Sinais de automação",
+            detail: "Nenhum padrão de acesso automatizado (bot) identificado.",
+            ok: true,
         },
     ]
 }

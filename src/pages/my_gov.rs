@@ -1,5 +1,6 @@
 use dioxus::prelude::*;
 
+use crate::components::FraudShield;
 use crate::data::{alerts, life_areas, LifeState};
 use crate::routes::Route;
 
@@ -38,6 +39,8 @@ pub fn MyGovPanel() -> Element {
                     }
                 }
             }
+
+            FraudShield {}
 
             div { class: "mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4",
                 for area in areas.iter() {
