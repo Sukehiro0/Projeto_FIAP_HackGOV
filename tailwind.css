@@ -1,1 +1,61 @@
 @import "tailwindcss";
+
+/* Paleta oficial do Design System gov.br (DSGov) */
+@theme {
+    --color-govbr-blue-dark: #071d41;
+    --color-govbr-blue: #1351b4;
+    --color-govbr-blue-light: #2670e8;
+    --color-govbr-blue-soft: #adc2ff;
+    --color-govbr-yellow: #ffcd07;
+    --color-govbr-green: #168821;
+    --color-govbr-gray-bg: #f8f8f8;
+    --color-govbr-gray-border: #e0e0e0;
+    --color-govbr-gray-text: #4b5563;
+}
+
+/* Modo de alto contraste real (ativado via botao de acessibilidade) */
+.high-contrast,
+.high-contrast * {
+    background-color: #000000 !important;
+    color: #ffcd07 !important;
+    border-color: #ffcd07 !important;
+}
+
+.high-contrast img,
+.high-contrast span {
+    filter: none !important;
+}
+
+.high-contrast a,
+.high-contrast button {
+    text-decoration: underline !important;
+}
+
+/* Fade-in on scroll: aplicado via IntersectionObserver (ver use_effect no Home) */
+.reveal {
+    opacity: 0;
+    transform: translateY(16px);
+    transition:
+        opacity 0.6s ease-out,
+        transform 0.6s ease-out;
+}
+
+.reveal.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Modo fácil (acessibilidade avançada): mais espaçamento, botões maiores, menos ruído visual */
+.easy-mode {
+    line-height: 1.8 !important;
+}
+
+.easy-mode button,
+.easy-mode a {
+    min-height: 44px;
+}
+
+.easy-mode .easy-mode-hide {
+    display: none !important;
+}
+
