@@ -1,0 +1,13 @@
+{
+  "tailwindCSS.includeLanguages": {
+    "rust": "html"
+  },
+  "tailwindCSS.experimental.classRegex": [
+    ["class:\\s*\"([^\"]*)\"", "([a-zA-Z0-9\\-:/%.\\[\\]]+)"]
+  ],
+  "rust-analyzer.cargo.features": ["web"],
+  "[rust]": {
+    "editor.defaultFormatter": "rust-lang.rust-analyzer",
+    "editor.formatOnSave": true
+  }
+}
