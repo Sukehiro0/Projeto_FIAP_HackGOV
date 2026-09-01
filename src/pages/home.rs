@@ -1,7 +1,8 @@
 use dioxus::prelude::*;
 
-use crate::components::{Assistant, Categories, Hero, Security, Services, Stats, StatusPanel};
+use crate::components::{Assistant, Categories, Hero, Security, Services, Stats, StatusPanel, UrbanServices};
 
+/// Página inicial: reúne busca, assistente, serviços, categorias, segurança e status.
 #[component]
 pub fn Home() -> Element {
     // Ativa o fade-in das seções ao entrarem na viewport (IntersectionObserver)
@@ -25,6 +26,7 @@ pub fn Home() -> Element {
 
     rsx! {
         Hero {}
+        UrbanServices {}
         Assistant {}
         Stats {}
         Services {}

@@ -5,6 +5,7 @@ struct Stat {
     label: &'static str,
 }
 
+/// Faixa de estatísticas gerais da plataforma (usuários, serviços, avaliação média).
 #[component]
 pub fn Stats() -> Element {
     let stats = [

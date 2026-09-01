@@ -1,7 +1,9 @@
+use crate::components::IconKind;
+
 #[derive(Clone, PartialEq)]
 pub struct Service {
     pub slug: &'static str,
-    pub icon: &'static str,
+    pub icon: IconKind,
     pub tag: &'static str,
     pub name: &'static str,
     pub time_estimate: &'static str,
@@ -28,7 +30,7 @@ pub struct Service {
 
 #[derive(Clone, PartialEq)]
 pub struct Category {
-    pub icon: &'static str,
+    pub icon: IconKind,
     pub name: &'static str,
 }
 
@@ -41,7 +43,7 @@ pub enum AlertLevel {
 
 #[derive(Clone, PartialEq)]
 pub struct Alert {
-    pub icon: &'static str,
+    pub icon: IconKind,
     pub title: &'static str,
     pub message: &'static str,
     pub level: AlertLevel,
@@ -57,7 +59,7 @@ pub enum LifeState {
 /// Um "cartão" da vida do cidadão para o painel "Minha vida no governo".
 #[derive(Clone, PartialEq)]
 pub struct LifeArea {
-    pub icon: &'static str,
+    pub icon: IconKind,
     pub name: &'static str,
     pub status: &'static str,
     pub state: LifeState,
@@ -77,7 +79,7 @@ pub struct AttendancePoint {
 /// Um motivo de bloqueio para o botão "Não consigo resolver", com a solução sugerida.
 #[derive(Clone, PartialEq)]
 pub struct HelpReason {
-    pub icon: &'static str,
+    pub icon: IconKind,
     pub label: &'static str,
     pub solution: &'static str,
 }
@@ -104,7 +106,7 @@ pub fn services() -> Vec<Service> {
     vec![
         Service {
             slug: "assinatura-eletronica",
-            icon: "✍️",
+            icon: IconKind::Signature,
             tag: "Identidade Digital",
             name: "Assinatura Eletrônica",
             time_estimate: "~5 min",
@@ -121,7 +123,7 @@ pub fn services() -> Vec<Service> {
         },
         Service {
             slug: "consultar-imposto-renda",
-            icon: "💰",
+            icon: IconKind::Money,
             tag: "Finanças e Impostos",
             name: "Consultar Imposto de Renda",
             time_estimate: "~3 min",
@@ -138,7 +140,7 @@ pub fn services() -> Vec<Service> {
         },
         Service {
             slug: "entregar-imposto-renda",
-            icon: "📄",
+            icon: IconKind::Document,
             tag: "Finanças e Impostos",
             name: "Entregar Imposto de Renda",
             time_estimate: "~20 min",
@@ -155,7 +157,7 @@ pub fn services() -> Vec<Service> {
         },
         Service {
             slug: "consultar-restituicao",
-            icon: "🧾",
+            icon: IconKind::Money,
             tag: "Finanças e Impostos",
             name: "Consultar Restituição",
             time_estimate: "~2 min",
@@ -172,7 +174,7 @@ pub fn services() -> Vec<Service> {
         },
         Service {
             slug: "carteira-trabalho",
-            icon: "🪪",
+            icon: IconKind::Briefcase,
             tag: "Trabalho e Previdência",
             name: "Carteira de Trabalho Digital",
             time_estimate: "~10 min",
@@ -189,7 +191,7 @@ pub fn services() -> Vec<Service> {
         },
         Service {
             slug: "passaporte",
-            icon: "🛂",
+            icon: IconKind::Plane,
             tag: "Viagens e Turismo",
             name: "Solicitar Passaporte",
             time_estimate: "~15 min",
@@ -206,7 +208,7 @@ pub fn services() -> Vec<Service> {
         },
         Service {
             slug: "cnh-digital",
-            icon: "🚗",
+            icon: IconKind::Car,
             tag: "Trânsito",
             name: "CNH Digital e Segunda Via",
             time_estimate: "~8 min",
@@ -229,57 +231,147 @@ pub fn services() -> Vec<Service> {
             resolved_pct: 81,
             main_issue: "Verificação facial não reconhece o rosto",
         },
+        // --- Cidade e Serviços Urbanos ---------------------------------------------
+        // Novo módulo: em vez de um único serviço genérico, cada tipo de chamado
+        // urbano vira um serviço próprio (mesmo padrão dos demais), o que dá acesso
+        // direto pela busca, pelo assistente e pela lista de serviços, sem precisar
+        // de nenhuma tela nova — só dados. Ver também o banner de destaque na Home
+        // (`UrbanServices`) e a categoria "Cidade e Serviços Urbanos" logo abaixo.
+        Service {
+            slug: "iluminacao-publica",
+            icon: IconKind::Lightbulb,
+            tag: "Cidade e Serviços Urbanos",
+            name: "Reparo de Iluminação Pública",
+            time_estimate: "~4 min",
+            description: "Relate um poste apagado, piscando ou danificado para que a equipe de manutenção seja acionada.",
+            keywords: &["poste", "luz", "iluminação", "lâmpada queimada", "rua escura", "poste apagado"],
+            requirements: &["Endereço ou ponto de referência do poste", "Foto do local (opcional, mas ajuda bastante)"],
+            needs_biometrics: false,
+            simple_explanation: "Um poste de luz perto de você está com problema? Conte pra gente onde é, e a equipe vai lá consertar.",
+            rating: 4.1,
+            avg_days: 5,
+            complaints: 610,
+            resolved_pct: 87,
+            main_issue: "Demora quando o poste fica em via de difícil acesso",
+        },
+        Service {
+            slug: "poda-arvores",
+            icon: IconKind::Leaf,
+            tag: "Cidade e Serviços Urbanos",
+            name: "Poda ou Remoção de Árvore",
+            time_estimate: "~4 min",
+            description: "Solicite a poda de galhos que ameaçam a fiação ou a estrutura da via, ou a avaliação para remoção de árvore com risco de queda.",
+            keywords: &["árvore", "poda", "galho", "arvore caida", "risco de queda"],
+            requirements: &["Endereço da árvore", "Foto do local", "Motivo (galho na fiação, risco de queda, raiz quebrando a calçada, etc.)"],
+            needs_biometrics: false,
+            simple_explanation: "Tem uma árvore com galho perigoso ou que pode cair? Registre aqui pra equipe avaliar.",
+            rating: 3.9,
+            avg_days: 9,
+            complaints: 340,
+            resolved_pct: 78,
+            main_issue: "Fila de espera longa em época de chuva",
+        },
+        Service {
+            slug: "buraco-via",
+            icon: IconKind::Cone,
+            tag: "Cidade e Serviços Urbanos",
+            name: "Reparo de Buraco na Via",
+            time_estimate: "~4 min",
+            description: "Reporte um buraco no asfalto ou na calçada para que a equipe de manutenção viária faça o reparo.",
+            keywords: &["buraco", "rua", "via", "asfalto", "cratera", "buraco na rua", "buraco na pista"],
+            requirements: &["Endereço ou trecho da via", "Foto do buraco", "Tamanho aproximado"],
+            needs_biometrics: false,
+            simple_explanation: "Achou um buraco perigoso na rua? Manda o endereço e uma foto que a equipe de tapa-buraco vai até lá.",
+            rating: 3.5,
+            avg_days: 11,
+            complaints: 1280,
+            resolved_pct: 69,
+            main_issue: "Categoria com mais chamados e maior tempo de espera da cidade",
+        },
+        Service {
+            slug: "remocao-objetos",
+            icon: IconKind::Trash,
+            tag: "Cidade e Serviços Urbanos",
+            name: "Remoção de Objetos e Entulho",
+            time_estimate: "~4 min",
+            description: "Solicite a remoção de entulho, móveis descartados ou objetos volumosos deixados em via ou terreno público.",
+            keywords: &["entulho", "lixo", "objeto", "remoção", "móvel velho", "descarte irregular"],
+            requirements: &["Endereço do local", "Foto do material", "Tipo de material (móvel, entulho de obra, galhos, etc.)"],
+            needs_biometrics: false,
+            simple_explanation: "Tem entulho ou móvel jogado na rua? Diga onde é que a equipe de limpeza vai recolher.",
+            rating: 4.0,
+            avg_days: 6,
+            complaints: 520,
+            resolved_pct: 85,
+            main_issue: "Reincidência de descarte no mesmo ponto após a coleta",
+        },
     ]
+}
+
+/// Os 4 serviços de "Cidade e Serviços Urbanos", na ordem em que aparecem no
+/// banner de destaque da Home. Mantido separado de `services()` para o
+/// banner não depender da ordem/posição desses itens dentro da lista geral.
+pub fn urban_services() -> Vec<Service> {
+    services()
+        .into_iter()
+        .filter(|s| s.tag == "Cidade e Serviços Urbanos")
+        .collect()
 }
 
 pub fn categories() -> Vec<Category> {
     vec![
+        // Fica em primeiro na grade de categorias de propósito: é o módulo novo,
+        // e o pedido foi justamente deixá-lo fácil de achar e em destaque.
         Category {
-            icon: "🌾",
+            icon: IconKind::Cone,
+            name: "Cidade e Serviços Urbanos",
+        },
+        Category {
+            icon: IconKind::Leaf,
             name: "Agricultura e Pecuária",
         },
         Category {
-            icon: "🤝",
+            icon: IconKind::Users,
             name: "Assistência Social",
         },
         Category {
-            icon: "🔬",
+            icon: IconKind::Flask,
             name: "Ciência e Tecnologia",
         },
         Category {
-            icon: "🎓",
+            icon: IconKind::GraduationCap,
             name: "Educação e Pesquisa",
         },
         Category {
-            icon: "🏥",
+            icon: IconKind::HealthCross,
             name: "Saúde e Vigilância Sanitária",
         },
         Category {
-            icon: "⚖️",
+            icon: IconKind::Scale,
             name: "Justiça e Segurança",
         },
         Category {
-            icon: "🏗️",
+            icon: IconKind::Tool,
             name: "Infraestrutura e Trânsito",
         },
         Category {
-            icon: "🌎",
+            icon: IconKind::Globe,
             name: "Meio Ambiente e Clima",
         },
         Category {
-            icon: "💼",
+            icon: IconKind::Briefcase,
             name: "Trabalho e Previdência",
         },
         Category {
-            icon: "🏢",
+            icon: IconKind::Building,
             name: "Empresa, Indústria e Comércio",
         },
         Category {
-            icon: "✈️",
+            icon: IconKind::Plane,
             name: "Viagens e Turismo",
         },
         Category {
-            icon: "🎭",
+            icon: IconKind::Palette,
             name: "Cultura, Artes e Esportes",
         },
     ]
@@ -289,25 +381,25 @@ pub fn categories() -> Vec<Category> {
 pub fn alerts() -> Vec<Alert> {
     vec![
         Alert {
-            icon: "⚠️",
+            icon: IconKind::Warning,
             title: "Sua CNH vence em 30 dias",
             message: "Renove agora para evitar multa e pontos na carteira.",
             level: AlertLevel::Urgent,
         },
         Alert {
-            icon: "📋",
+            icon: IconKind::Document,
             title: "Existe uma pendência no seu CPF",
             message: "Regularize para não perder acesso a outros serviços.",
             level: AlertLevel::Warning,
         },
         Alert {
-            icon: "💰",
+            icon: IconKind::Money,
             title: "Você pode ter direito a uma restituição",
             message: "Consulte o valor disponível do seu Imposto de Renda.",
             level: AlertLevel::Info,
         },
         Alert {
-            icon: "📅",
+            icon: IconKind::Calendar,
             title: "O prazo da declaração termina em 5 dias",
             message: "Entregue o Imposto de Renda até 31/05 para evitar multa.",
             level: AlertLevel::Warning,
@@ -319,84 +411,84 @@ pub fn alerts() -> Vec<Alert> {
 pub fn life_areas() -> Vec<LifeArea> {
     vec![
         LifeArea {
-            icon: "🪪",
+            icon: IconKind::IdCard,
             name: "Documentos",
             status: "CPF e identidade regulares",
             state: LifeState::Ok,
             related_slug: None,
         },
         LifeArea {
-            icon: "🚗",
+            icon: IconKind::Car,
             name: "CNH e Veículos",
             status: "CNH vence em 30 dias",
             state: LifeState::Attention,
             related_slug: Some("cnh-digital"),
         },
         LifeArea {
-            icon: "💰",
+            icon: IconKind::Money,
             name: "Impostos",
             status: "Declaração de 2026 ainda pendente",
             state: LifeState::Pending,
             related_slug: Some("entregar-imposto-renda"),
         },
         LifeArea {
-            icon: "🧾",
+            icon: IconKind::Document,
             name: "Restituição",
             status: "R$ 1.240,00 disponível para saque",
             state: LifeState::Attention,
             related_slug: Some("consultar-restituicao"),
         },
         LifeArea {
-            icon: "💼",
+            icon: IconKind::Briefcase,
             name: "Trabalho",
             status: "3 vínculos empregatícios registrados",
             state: LifeState::Ok,
             related_slug: Some("carteira-trabalho"),
         },
         LifeArea {
-            icon: "🏛️",
+            icon: IconKind::Landmark,
             name: "Benefícios",
             status: "Nenhum benefício ativo no momento",
             state: LifeState::Ok,
             related_slug: None,
         },
         LifeArea {
-            icon: "🗳️",
+            icon: IconKind::Ballot,
             name: "Situação Eleitoral",
             status: "Título regular e em dia",
             state: LifeState::Ok,
             related_slug: None,
         },
         LifeArea {
-            icon: "🏥",
+            icon: IconKind::HealthCross,
             name: "Saúde",
             status: "Cartão do SUS ativo",
             state: LifeState::Ok,
             related_slug: None,
         },
         LifeArea {
-            icon: "🎓",
+            icon: IconKind::GraduationCap,
             name: "Educação",
             status: "Nenhum registro acadêmico vinculado",
             state: LifeState::Ok,
             related_slug: None,
         },
         LifeArea {
-            icon: "🛂",
+            icon: IconKind::Plane,
             name: "Passaporte",
             status: "Nenhum passaporte emitido",
             state: LifeState::Ok,
             related_slug: Some("passaporte"),
         },
         LifeArea {
-            icon: "✍️",
+            icon: IconKind::Signature,
             name: "Assinaturas",
             status: "2 documentos assinados este ano",
             state: LifeState::Ok,
             related_slug: Some("assinatura-eletronica"),
         },
         LifeArea {
-            icon: "👴",
+            icon: IconKind::Clock,
             name: "Aposentadoria",
             status: "Simulação de tempo de contribuição disponível",
             state: LifeState::Ok,
@@ -439,42 +531,42 @@ pub fn attendance_points() -> Vec<AttendancePoint> {
 pub fn help_reasons() -> Vec<HelpReason> {
     vec![
         HelpReason {
-            icon: "🔑",
+            icon: IconKind::Key,
             label: "Não consigo entrar",
             solution: "Confira se está digitando o CPF correto. Se o problema continuar, use \"Esqueci minha senha\" na tela de login.",
         },
         HelpReason {
-            icon: "🔒",
+            icon: IconKind::Lock,
             label: "Esqueci minha senha",
             solution: "Clique em \"Esqueci minha senha\" na tela de login e siga a verificação por e-mail, SMS ou banco credenciado.",
         },
         HelpReason {
-            icon: "🤳",
+            icon: IconKind::Camera,
             label: "Reconhecimento facial falhou",
             solution: "Você pode confirmar sua identidade por banco credenciado, e-mail, telefone ou atendimento presencial — sem precisar da selfie.",
         },
         HelpReason {
-            icon: "📄",
+            icon: IconKind::Document,
             label: "Não tenho o documento pedido",
             solution: "Veja abaixo o posto de atendimento mais próximo para emitir o documento, ou continue depois: seus dados ficam salvos.",
         },
         HelpReason {
-            icon: "❓",
+            icon: IconKind::HelpCircle,
             label: "Não entendi a etapa",
             solution: "Ative o botão \"Linguagem simples\" na página do serviço para uma explicação mais direta, sem termos técnicos.",
         },
         HelpReason {
-            icon: "🐛",
+            icon: IconKind::Bug,
             label: "O sistema apresentou erro",
             solution: "Tente novamente em alguns minutos. Se o erro continuar, abra um chamado na Central de Ajuda com o horário em que ocorreu.",
         },
         HelpReason {
-            icon: "⏳",
+            icon: IconKind::Hourglass,
             label: "Meu pedido está parado",
             solution: "Consulte o tempo médio de conclusão na página do serviço. Se já passou do prazo, você pode registrar uma reclamação formal.",
         },
         HelpReason {
-            icon: "🗣️",
+            icon: IconKind::Chat,
             label: "Preciso falar com uma pessoa",
             solution: "Ligue para a Central 0800 000 0000 ou procure um dos postos de atendimento presencial listados abaixo.",
         },

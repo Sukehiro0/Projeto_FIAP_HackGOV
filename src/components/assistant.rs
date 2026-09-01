@@ -1,8 +1,12 @@
 use dioxus::prelude::*;
 
+use crate::components::{Icon, IconKind};
 use crate::data::services;
 use crate::routes::Route;
 
+/// "O que você precisa fazer hoje?": busca em linguagem natural que interpreta
+/// palavras-chave (sem backend/LLM) e sugere o serviço certo, em vez de exigir
+/// que o cidadão já saiba o nome oficial do trâmite.
 #[component]
 pub fn Assistant() -> Element {
     let mut question = use_signal(String::new);
@@ -44,7 +48,8 @@ pub fn Assistant() -> Element {
             div { class: "max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16",
                 div { class: "text-center mb-8",
                     span { class: "inline-flex items-center gap-2 text-xs font-semibold text-govbr-yellow bg-white/10 rounded px-3 py-1 mb-4",
-                        "✨ Novidade"
+                        Icon { kind: IconKind::Sparkle, class: "w-3.5 h-3.5" }
+                        "Novidade"
                     }
                     h2 { class: "text-2xl sm:text-3xl font-bold text-white",
                         "Não sabe por onde começar? Pergunte ao assistente"
@@ -110,12 +115,12 @@ pub fn Assistant() -> Element {
                                     Link {
                                         to: Route::ServiceDetail { slug: s.slug.to_string() },
                                         class: "flex items-center gap-3 p-3 rounded border border-govbr-gray-border hover:border-govbr-blue hover:bg-govbr-gray-bg transition-colors",
-                                        span { class: "text-2xl", "{s.icon}" }
+                                        Icon { kind: s.icon, class: "w-6 h-6 text-govbr-blue" }
                                         div { class: "flex-1 min-w-0",
                                             p { class: "text-sm font-semibold text-govbr-blue-dark", "{s.name}" }
-                                            p { class: "text-xs text-govbr-gray-text", "{s.tag} · ⏱️ {s.time_estimate}" }
+                                            p { class: "text-xs text-govbr-gray-text", "{s.tag} · {s.time_estimate}" }
                                         }
-                                        span { class: "text-govbr-blue", "→" }
+                                        Icon { kind: IconKind::ArrowRight, class: "w-4 h-4 text-govbr-blue" }
                                     }
                                 }
                             }

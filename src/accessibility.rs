@@ -45,6 +45,8 @@ impl A11ySettings {
 }
 
 /// Aplica o zoom de fonte no elemento raiz via JS, reagindo a mudanças do signal.
+/// `pct` é sempre um inteiro controlado internamente (88/100/112/124), nunca
+/// texto externo, então não há risco de injeção nessa interpolação.
 pub fn use_apply_font_scale(font_scale: Signal<i32>) {
     use_effect(move || {
         let pct = 100 + *font_scale.read() * 12;
@@ -55,11 +57,26 @@ pub fn use_apply_font_scale(font_scale: Signal<i32>) {
 }
 
 /// Lê um texto em voz alta usando a Web Speech API do navegador (suporte ao "Modo fácil").
+///
+/// Segurança: hoje `text` só recebe conteúdo estático de `data.rs` (nunca
+/// input do usuário), então o risco de injeção de JavaScript aqui é baixo.
+/// Ainda assim, escapamos defensivamente antes de interpolar a string no
+/// `document::eval`, incluindo os separadores de linha U+2028/U+2029 (que
+/// são válidos dentro de uma string Rust, mas quebram uma string JS entre
+/// aspas simples mesmo sem aparecer como `\n` ou `'`). Se este texto um dia
+/// passar a vir de uma fonte externa/dinâmica (ex: um campo digitado pelo
+/// cidadão), o ideal é parar de montar JS por interpolação de string e
+/// passar o valor via `document::eval(...).send(...)` (canal tipado do
+/// Dioxus) em vez de `format!` — ver SECURITY.md, item "eval e injeção de JS".
 pub fn speak(text: &str) {
     let escaped = text
         .replace('\\', "\\\\")
         .replace('\'', "\\'")
-        .replace('\n', " ");
+        .replace('\n', " ")
+        .replace('\r', " ")
+        .replace('\u{2028}', " ")
+        .replace('\u{2029}', " ")
+        .replace("</", "<\\/");
     document::eval(&format!(
         "if ('speechSynthesis' in window) {{
             window.speechSynthesis.cancel();

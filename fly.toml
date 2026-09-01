@@ -1,0 +1,39 @@
+# Configuração do Fly.io para o HackGOV (backend fullstack: Axum + SQLite).
+#
+# Este arquivo é um ponto de partida — rode `fly launch` (ou `fly deploy` depois
+# de criar o app com `fly apps create hackgov`) para validar/gerar a versão
+# definitiva na sua conta. Veja o guia oficial:
+# https://dioxuslabs.com/learn/0.7/tutorial/deploy
+#
+# Passos manuais necessários (fora do alcance deste agente):
+#   1. Criar uma conta em https://fly.io e instalar o `flyctl`.
+#   2. `fly launch --no-deploy` neste diretório (detecta o Dockerfile).
+#   3. `fly volumes create hackgov_data --size 1` (persistência do SQLite).
+#   4. `fly secrets set` para qualquer segredo adicional, se necessário.
+#   5. Adicionar o token (`fly tokens create deploy`) como o secret
+#      `FLY_API_TOKEN` no GitHub (Settings → Secrets → Actions) para o
+#      workflow `.github/workflows/fly-deploy.yml` funcionar.
+
+app = "hackgov"
+primary_region = "gru" # São Paulo — ajuste para a região mais próxima dos usuários
+
+[build]
+
+[env]
+PORT = "8080"
+HACKGOV_DB_PATH = "/data/hackgov.db"
+
+[[mounts]]
+source = "hackgov_data"
+destination = "/data"
+
+[http_service]
+internal_port = 8080
+force_https = true
+auto_stop_machines = "stop"
+auto_start_machines = true
+min_machines_running = 0
+
+[[vm]]
+size = "shared-cpu-1x"
+memory = "512mb"

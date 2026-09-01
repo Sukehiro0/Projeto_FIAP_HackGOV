@@ -1,5 +1,7 @@
 use dioxus::prelude::*;
 
+use crate::components::{Icon, IconKind};
+
 const ISSUES: [&str; 7] = [
     "Demorou mais do que esperado",
     "Não entendi alguma etapa",
@@ -21,7 +23,7 @@ pub fn FeedbackForm() -> Element {
         div { class: "mt-6 border-t border-govbr-gray-border pt-6",
             if sent() {
                 div { class: "text-center py-4",
-                    span { class: "text-3xl", "🙏" }
+                    Icon { kind: IconKind::CheckCircle, class: "w-9 h-9 text-govbr-green mx-auto" }
                     p { class: "mt-2 text-sm font-semibold text-govbr-blue-dark", "Obrigado pelo feedback!" }
                     p { class: "text-xs text-govbr-gray-text mt-1",
                         "Suas respostas ajudam a melhorar este serviço para todos."
@@ -32,9 +34,14 @@ pub fn FeedbackForm() -> Element {
                 div { class: "flex gap-1 mb-4",
                     for i in 1..=5 {
                         button {
-                            class: if i <= rating() { "text-2xl text-govbr-yellow" } else { "text-2xl text-govbr-gray-border" },
+                            "aria-label": "Nota {i} de 5",
+                            "aria-pressed": if i <= rating() { "true" } else { "false" },
                             onclick: move |_| rating.set(i),
-                            "★"
+                            if i <= rating() {
+                                Icon { kind: IconKind::Star, class: "w-6 h-6 text-govbr-yellow" }
+                            } else {
+                                Icon { kind: IconKind::StarOutline, class: "w-6 h-6 text-govbr-gray-border" }
+                            }
                         }
                     }
                 }

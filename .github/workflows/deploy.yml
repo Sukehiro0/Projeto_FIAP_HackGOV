@@ -1,0 +1,73 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: {}
+
+# Only one Pages deployment at a time; let in-flight ones finish instead of cancelling
+# them (recommended by GitHub's official Pages deploy template).
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    name: Build (dx bundle --release)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install npm dependencies
+        run: npm ci
+
+      - name: Build Tailwind CSS
+        run: npm run build:css
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+
+      - name: Cache cargo
+        uses: Swatinem/rust-cache@v2
+
+      # Pinned to match the dx CLI version this project was validated against
+      # (dioxus = "0.7.1" in Cargo.toml resolves to 0.7.10). Bump deliberately.
+      - name: Install dioxus-cli
+        run: cargo install dioxus-cli --version 0.7.10 --locked
+
+      - name: Bundle web app (release)
+        run: dx bundle --platform web --release --base-path ${{ github.event.repository.name }}
+
+      - name: Copy index.html to 404.html (client-side routing fallback)
+        run: cp target/dx/hackgov/release/web/public/index.html target/dx/hackgov/release/web/public/404.html
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: target/dx/hackgov/release/web/public
+
+  deploy:
+    name: Deploy
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

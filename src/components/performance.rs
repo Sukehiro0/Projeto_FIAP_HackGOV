@@ -1,5 +1,6 @@
 use dioxus::prelude::*;
 
+use crate::components::{Icon, IconKind};
 use crate::data::Service;
 
 /// Transparência de desempenho: nota, tempo médio e principais problemas de cada serviço,
@@ -12,9 +13,13 @@ pub fn PerformanceCard(service: Service) -> Element {
         div { class: "mt-8 bg-govbr-gray-bg rounded-lg p-6",
             h2 { class: "text-base font-semibold text-govbr-blue-dark mb-4", "Transparência de desempenho" }
             div { class: "flex items-center gap-2 mb-4",
-                div { class: "flex text-govbr-yellow text-lg leading-none",
+                div { class: "flex items-center gap-0.5",
                     for i in 0..5 {
-                        span { if i < full_stars { "★" } else { "☆" } }
+                        if i < full_stars {
+                            Icon { kind: IconKind::Star, class: "w-4 h-4 text-govbr-yellow" }
+                        } else {
+                            Icon { kind: IconKind::StarOutline, class: "w-4 h-4 text-govbr-gray-border" }
+                        }
                     }
                 }
                 span { class: "text-sm font-semibold text-govbr-blue-dark", "{service.rating}" }

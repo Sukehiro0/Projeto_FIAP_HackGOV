@@ -1,8 +1,10 @@
 use dioxus::prelude::*;
 
+use crate::components::{Icon, IconKind};
 use crate::data::services;
 use crate::routes::Route;
 
+/// Seção de busca principal da Home, com resultados em tempo real conforme o usuário digita.
 #[component]
 pub fn Hero() -> Element {
     let mut query = use_signal(String::new);
@@ -27,11 +29,11 @@ pub fn Hero() -> Element {
     });
 
     rsx! {
-        section { id: "top", class: "bg-white",
+        section { class: "bg-white",
             div { class: "max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-14",
                 // Titulo simples estilo gov.br real (sem hero gigante)
                 div { class: "flex items-center gap-3 mb-8",
-                    span { class: "text-govbr-blue text-xl", "☰" }
+                    Icon { kind: IconKind::Menu, class: "w-6 h-6 text-govbr-blue" }
                     h1 { class: "text-xl sm:text-2xl font-normal text-govbr-gray-text", "Serviços e Informações do Brasil" }
                 }
 
@@ -46,9 +48,10 @@ pub fn Hero() -> Element {
                             oninput: move |e| query.set(e.value()),
                         }
                         button {
+                            r#type: "submit",
                             class: "flex items-center justify-center w-10 h-10 rounded-full text-govbr-blue hover:bg-govbr-blue/10 transition-colors",
                             "aria-label": "Buscar",
-                            "🔍"
+                            Icon { kind: IconKind::Search, class: "w-5 h-5" }
                         }
                     }
 
@@ -64,10 +67,10 @@ pub fn Hero() -> Element {
                                     Link {
                                         to: Route::ServiceDetail { slug: r.slug.to_string() },
                                         class: "flex items-center gap-3 px-4 py-3 hover:bg-govbr-gray-bg transition-colors border-b border-govbr-gray-border last:border-0",
-                                        span { class: "text-xl", "{r.icon}" }
+                                        Icon { kind: r.icon, class: "w-5 h-5 text-govbr-blue" }
                                         div {
                                             p { class: "text-sm font-semibold text-govbr-blue-dark", "{r.name}" }
-                                            p { class: "text-xs text-govbr-gray-text", "{r.tag} · ⏱️ {r.time_estimate}" }
+                                            p { class: "text-xs text-govbr-gray-text", "{r.tag} · {r.time_estimate}" }
                                         }
                                     }
                                 }

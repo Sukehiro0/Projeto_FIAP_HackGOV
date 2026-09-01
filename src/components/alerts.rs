@@ -1,7 +1,9 @@
 use dioxus::prelude::*;
 
+use crate::components::{Icon, IconKind};
 use crate::data::{alerts, AlertLevel};
 
+/// Sino de alertas no header: mostra pendências do cidadão (prazos, documentos) em um dropdown.
 #[component]
 pub fn AlertsBell() -> Element {
     let mut open = use_signal(|| false);
@@ -11,11 +13,11 @@ pub fn AlertsBell() -> Element {
     rsx! {
         div { class: "relative",
             button {
-                class: "relative flex items-center justify-center w-9 h-9 rounded-full hover:bg-govbr-gray-bg transition-colors text-lg",
+                class: "relative flex items-center justify-center w-9 h-9 rounded-full hover:bg-govbr-gray-bg transition-colors",
                 title: "Alertas",
-                "aria-label": "Ver alertas",
+                "aria-label": "Ver alertas, {count} pendentes",
                 onclick: move |_| open.toggle(),
-                "🔔"
+                Icon { kind: IconKind::Bell, class: "w-5 h-5 text-govbr-blue-dark" }
                 if count > 0 {
                     span { class: "absolute -top-0.5 -right-0.5 flex items-center justify-center w-4 h-4 rounded-full bg-govbr-yellow text-govbr-blue-dark text-[10px] font-bold",
                         "{count}"
@@ -42,7 +44,7 @@ pub fn AlertsBell() -> Element {
                                         AlertLevel::Info => "shrink-0 w-2 h-2 rounded-full bg-govbr-blue mt-2",
                                     },
                                 }
-                                span { class: "text-xl shrink-0", "{a.icon}" }
+                                Icon { kind: a.icon, class: "w-5 h-5 text-govbr-blue shrink-0 mt-0.5" }
                                 div {
                                     p { class: "text-sm font-medium text-govbr-blue-dark", "{a.title}" }
                                     p { class: "text-xs text-govbr-gray-text mt-0.5", "{a.message}" }

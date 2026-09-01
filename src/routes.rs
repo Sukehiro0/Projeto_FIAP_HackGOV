@@ -1,7 +1,7 @@
 use dioxus::prelude::*;
 
 use crate::accessibility::A11ySettings;
-use crate::components::{Footer, Header, HelpWidget};
+use crate::components::{AccessibilityWidget, ComingSoonDialog, Footer, Header, HelpWidget};
 use crate::pages::{Home, MyGovPanel, ServiceDetail};
 
 #[derive(Routable, Clone, PartialEq)]
@@ -32,9 +32,16 @@ fn AppLayout() -> Element {
         div {
             class,
             Header {}
-            div { class: "flex-1", Outlet::<Route> {} }
+            // `id="top"` fica aqui, no wrapper do conteúdo de CADA rota, e não
+            // só na Home. Antes, o link de pular conteúdo ("Ir para o
+            // conteúdo") e o `#top` só existiam dentro do Hero da Home — em
+            // qualquer outra página (ex: /servicos/:slug) o link não levava a
+            // lugar nenhum. Agora `#top` sempre existe, em qualquer rota.
+            div { id: "top", class: "flex-1", Outlet::<Route> {} }
             Footer {}
+            AccessibilityWidget {}
             HelpWidget {}
+            ComingSoonDialog {}
         }
     }
 }

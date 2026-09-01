@@ -1,5 +1,6 @@
 use dioxus::prelude::*;
 
+use crate::components::{Icon, IconKind};
 use crate::data::{fraud_level, fraud_risk_score, fraud_signals, FraudRiskLevel};
 
 /// Card de transparência do sistema antifraude: a decisão combina vários sinais
@@ -24,7 +25,10 @@ pub fn FraudShield() -> Element {
     rsx! {
         div { class: "mt-8 bg-govbr-gray-bg rounded-lg p-6",
             div { class: "flex items-center justify-between gap-3 mb-1",
-                h2 { class: "text-sm font-semibold text-govbr-blue-dark", "🛡️ Segurança da sua conta" }
+                h2 { class: "text-sm font-semibold text-govbr-blue-dark flex items-center gap-2",
+                    Icon { kind: IconKind::Shield, class: "w-4 h-4 text-govbr-blue" }
+                    "Segurança da sua conta"
+                }
                 span { class: "text-xs font-bold {level_color}", "{level_label}" }
             }
             div { class: "flex items-center gap-3 mt-3",
@@ -39,9 +43,10 @@ pub fn FraudShield() -> Element {
             div { class: "mt-4 flex flex-col gap-2.5",
                 for s in signals.iter() {
                     div { class: "flex items-start gap-2",
-                        span {
-                            class: if s.ok { "text-govbr-green font-bold" } else { "text-amber-600 font-bold" },
-                            if s.ok { "✓" } else { "⚠" }
+                        if s.ok {
+                            Icon { kind: IconKind::CheckCircle, class: "w-4 h-4 text-govbr-green shrink-0 mt-0.5" }
+                        } else {
+                            Icon { kind: IconKind::Warning, class: "w-4 h-4 text-amber-600 shrink-0 mt-0.5" }
                         }
                         div {
                             p { class: "text-xs font-medium text-govbr-blue-dark", "{s.label}" }

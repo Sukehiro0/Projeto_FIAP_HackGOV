@@ -1,13 +1,20 @@
 use dioxus::prelude::*;
 
+use crate::components::{Icon, IconKind};
 use crate::data::{attendance_points, help_reasons};
+use crate::ui_state::UiPanels;
 
 /// Botão flutuante "Não consigo resolver": em qualquer página, oferece um menu de
 /// motivos de bloqueio comuns e a solução direta para cada um (dor real relatada
 /// pelos usuários do gov.br: não saber a quem recorrer quando algo dá errado).
+///
+/// O estado de aberto/fechado mora em `UiPanels` (contexto compartilhado),
+/// não num `use_signal` local, porque o link "Central de ajuda" no rodapé
+/// também precisa conseguir abrir este painel.
 #[component]
 pub fn HelpWidget() -> Element {
-    let mut open = use_signal(|| false);
+    let ui = use_context::<UiPanels>();
+    let mut open = ui.help_open;
     let mut selected = use_signal(|| None::<usize>);
     let reasons = help_reasons();
     let points = attendance_points();
@@ -19,7 +26,7 @@ pub fn HelpWidget() -> Element {
                 open.set(true);
                 selected.set(None);
             },
-            span { "🆘" }
+            Icon { kind: IconKind::LifeBuoy, class: "w-5 h-5" }
             span { class: "hidden sm:inline", "Não consigo resolver" }
         }
 
@@ -33,21 +40,23 @@ pub fn HelpWidget() -> Element {
                     div { class: "px-6 py-4 border-b border-govbr-gray-border flex items-center justify-between",
                         h2 { class: "text-base font-semibold text-govbr-blue-dark", "Não conseguiu concluir?" }
                         button {
-                            class: "text-govbr-gray-text hover:text-govbr-blue-dark text-lg",
+                            class: "flex items-center justify-center w-9 h-9 text-govbr-gray-text hover:text-govbr-blue-dark",
+                            "aria-label": "Fechar",
                             onclick: move |_| open.set(false),
-                            "✕"
+                            Icon { kind: IconKind::Close, class: "w-5 h-5" }
                         }
                     }
                     div { class: "p-6",
                         if let Some(i) = selected() {
                             if let Some(reason) = reasons.get(i) {
                                 button {
-                                    class: "text-sm font-medium text-govbr-blue hover:underline mb-4",
+                                    class: "flex items-center gap-1 text-sm font-medium text-govbr-blue hover:underline mb-4",
                                     onclick: move |_| selected.set(None),
-                                    "← Voltar"
+                                    Icon { kind: IconKind::ArrowLeft, class: "w-4 h-4" }
+                                    "Voltar"
                                 }
                                 div { class: "flex items-start gap-3 mb-4",
-                                    span { class: "text-2xl", "{reason.icon}" }
+                                    Icon { kind: reason.icon, class: "w-7 h-7 text-govbr-blue shrink-0" }
                                     h3 { class: "text-sm font-semibold text-govbr-blue-dark pt-1", "{reason.label}" }
                                 }
                                 p { class: "text-sm text-govbr-gray-text leading-relaxed bg-govbr-gray-bg rounded-lg p-4",
@@ -74,9 +83,9 @@ pub fn HelpWidget() -> Element {
                             div { class: "flex flex-col gap-2",
                                 for (i , reason) in reasons.iter().enumerate() {
                                     button {
-                                        class: "flex items-center gap-3 text-left text-sm font-medium text-govbr-blue-dark border border-govbr-gray-border hover:border-govbr-blue hover:bg-govbr-gray-bg transition-colors rounded-lg px-4 py-3",
+                                        class: "flex items-center gap-3 min-h-[44px] text-left text-sm font-medium text-govbr-blue-dark border border-govbr-gray-border hover:border-govbr-blue hover:bg-govbr-gray-bg transition-colors rounded-lg px-4 py-3",
                                         onclick: move |_| selected.set(Some(i)),
-                                        span { class: "text-xl", "{reason.icon}" }
+                                        Icon { kind: reason.icon, class: "w-5 h-5 text-govbr-blue shrink-0" }
                                         "{reason.label}"
                                     }
                                 }

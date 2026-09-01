@@ -1,8 +1,10 @@
 use dioxus::prelude::*;
 
+use crate::components::{Icon, IconKind};
 use crate::data::services;
 use crate::routes::Route;
 
+/// Lista numerada dos serviços mais buscados, com tempo estimado de cada um.
 #[component]
 pub fn Services() -> Element {
     rsx! {
@@ -17,12 +19,16 @@ pub fn Services() -> Element {
                     Link {
                         to: Route::ServiceDetail { slug: service.slug.to_string() },
                         class: "group flex items-center gap-4 py-4 border-b border-govbr-gray-border",
-                        span { class: "text-2xl font-light text-govbr-gray-text w-8 shrink-0", "{i + 1}" }
+                        span { class: "text-lg font-light text-govbr-gray-text w-8 shrink-0", "{i + 1}" }
+                        Icon { kind: service.icon, class: "w-6 h-6 text-govbr-blue shrink-0" }
                         div { class: "flex-1 min-w-0",
                             p { class: "text-xs text-govbr-gray-text", "{service.tag}" }
                             p { class: "text-govbr-blue font-semibold group-hover:underline", "{service.name}" }
                         }
-                        span { class: "text-xs text-govbr-gray-text shrink-0", "⏱️ {service.time_estimate}" }
+                        span { class: "flex items-center gap-1 text-xs text-govbr-gray-text shrink-0",
+                            Icon { kind: IconKind::Clock, class: "w-3.5 h-3.5" }
+                            "{service.time_estimate}"
+                        }
                     }
                 }
             }
