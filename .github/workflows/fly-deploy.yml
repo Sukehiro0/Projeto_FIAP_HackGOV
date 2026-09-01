@@ -1,0 +1,30 @@
+name: Fly Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: {}
+
+# Evita deploys concorrentes; deixa o anterior terminar em vez de cancelar.
+concurrency:
+  group: fly-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy app (flyctl)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup flyctl
+        uses: superfly/flyctl-actions/setup-flyctl@master
+
+      # Requer o secret FLY_API_TOKEN no repositório (Settings > Secrets and
+      # variables > Actions). Sem ele, este job falha — os demais workflows
+      # (CI e GitHub Pages) não dependem do Fly.io e continuam funcionando.
+      - name: Deploy to Fly.io
+        run: flyctl deploy --remote-only
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}

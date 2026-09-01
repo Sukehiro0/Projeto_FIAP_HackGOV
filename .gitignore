@@ -12,3 +12,7 @@ npm-debug.log*
 
 # Dioxus build output
 /dist
+
+# Banco de dados local do backend (feature `server`), gerado em runtime
+*.db
+*.db-journal

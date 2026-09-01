@@ -19,13 +19,11 @@ pub enum Route {
 fn AppLayout() -> Element {
     let a11y = use_context::<A11ySettings>();
     let high_contrast = (a11y.high_contrast)();
-    let easy_mode = (a11y.easy_mode)();
 
-    let class = match (high_contrast, easy_mode) {
-        (true, true) => "min-h-screen bg-white flex flex-col high-contrast easy-mode",
-        (true, false) => "min-h-screen bg-white flex flex-col high-contrast",
-        (false, true) => "min-h-screen bg-white flex flex-col easy-mode",
-        (false, false) => "min-h-screen bg-white flex flex-col",
+    let class = if high_contrast {
+        "min-h-screen bg-white flex flex-col high-contrast"
+    } else {
+        "min-h-screen bg-white flex flex-col"
     };
 
     rsx! {

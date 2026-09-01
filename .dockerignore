@@ -1,0 +1,12 @@
+target
+dist
+docs
+node_modules
+.git
+.github
+.vscode
+LICENSE
+README.md
+SETUP.md
+AGENTS.md
+*.md

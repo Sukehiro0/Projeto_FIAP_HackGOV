@@ -1,5 +1,6 @@
 mod alerts;
 mod assistant;
+mod auth_modal;
 mod categories;
 mod feedback;
 mod footer;
@@ -15,6 +16,7 @@ mod status;
 
 pub use alerts::AlertsBell;
 pub use assistant::Assistant;
+pub use auth_modal::AuthModal;
 pub use categories::Categories;
 pub use feedback::FeedbackForm;
 pub use footer::Footer;

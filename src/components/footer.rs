@@ -1,7 +1,12 @@
 use dioxus::prelude::*;
 
+use crate::i18n::{t, I18n};
+
 #[component]
 pub fn Footer() -> Element {
+    let i18n = use_context::<I18n>();
+    let locale = (i18n.locale)();
+
     rsx! {
         footer { id: "ajuda", class: "scroll-mt-16 bg-govbr-blue-dark",
             div { class: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16",
@@ -14,12 +19,12 @@ pub fn Footer() -> Element {
                             span { class: "text-lg font-bold text-govbr-yellow", ".br" }
                         }
                         p { class: "text-sm text-govbr-blue-soft leading-relaxed",
-                            "Portal digital de serviços, mais tecnológico, seguro e simples para o cidadão."
+                            {t(locale, "footer.tagline")}
                         }
                     }
 
                     div {
-                        h4 { class: "text-xs font-bold uppercase tracking-wide text-white mb-4", "Sobre o Governo" }
+                        h4 { class: "text-xs font-bold uppercase tracking-wide text-white mb-4", {t(locale, "footer.about_title")} }
                         ul { class: "space-y-2 text-sm text-govbr-blue-soft",
                             li { a { href: "#", class: "hover:text-govbr-yellow transition-colors", "Órgãos do governo" } }
                             li { a { href: "#", class: "hover:text-govbr-yellow transition-colors", "Acesso à informação" } }
@@ -30,7 +35,7 @@ pub fn Footer() -> Element {
                     }
 
                     div {
-                        h4 { class: "text-xs font-bold uppercase tracking-wide text-white mb-4", "Ações e Programas" }
+                        h4 { class: "text-xs font-bold uppercase tracking-wide text-white mb-4", {t(locale, "footer.programs_title")} }
                         ul { class: "space-y-2 text-sm text-govbr-blue-soft",
                             li { a { href: "#", class: "hover:text-govbr-yellow transition-colors", "Notícias" } }
                             li { a { href: "#", class: "hover:text-govbr-yellow transition-colors", "Participe" } }
@@ -40,7 +45,7 @@ pub fn Footer() -> Element {
                     }
 
                     div {
-                        h4 { class: "text-xs font-bold uppercase tracking-wide text-white mb-4", "Ajuda" }
+                        h4 { class: "text-xs font-bold uppercase tracking-wide text-white mb-4", {t(locale, "footer.help_title")} }
                         ul { class: "space-y-2 text-sm text-govbr-blue-soft",
                             li { a { href: "#", class: "hover:text-govbr-yellow transition-colors", "Central de ajuda" } }
                             li { a { href: "#", class: "hover:text-govbr-yellow transition-colors", "Acessibilidade" } }
@@ -51,7 +56,7 @@ pub fn Footer() -> Element {
                     }
 
                     div {
-                        h4 { class: "text-xs font-bold uppercase tracking-wide text-white mb-4", "Legal" }
+                        h4 { class: "text-xs font-bold uppercase tracking-wide text-white mb-4", {t(locale, "footer.legal_title")} }
                         ul { class: "space-y-2 text-sm text-govbr-blue-soft",
                             li { a { href: "#", class: "hover:text-govbr-yellow transition-colors", "Termos de uso" } }
                             li { a { href: "#", class: "hover:text-govbr-yellow transition-colors", "Política de privacidade (LGPD)" } }
@@ -61,7 +66,7 @@ pub fn Footer() -> Element {
                 }
 
                 div { class: "mt-12 pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4",
-                    p { class: "text-xs text-govbr-blue-soft", "© 2026 HackGOV. Projeto de demonstração — não é um site oficial do governo." }
+                    p { class: "text-xs text-govbr-blue-soft", {t(locale, "footer.copyright")} }
                     div { class: "flex items-center gap-4 text-govbr-blue-soft text-sm",
                         a { href: "#", class: "hover:text-govbr-yellow transition-colors", title: "X (Twitter)", "🐦" }
                         a { href: "#", class: "hover:text-govbr-yellow transition-colors", title: "Facebook", "📘" }
