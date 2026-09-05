@@ -1,6 +1,6 @@
 # Segurança — hack.gov.br (HackGOV)
 
-Este documento existe para definir e seguir as práticas da 
+Este documento existe porque o pedido foi explícito: seguir as práticas da
 OWASP e as defesas relevantes contra ataques recentes a sites de governo.
 Ele está dividido em duas partes:
 

@@ -43,6 +43,14 @@ mas rode `dx serve` antes de dar commit pra confirmar.
 ## Comentários
 - Adicionado `///` doc comment em todo componente que ainda não tinha.
 
+## Modo fácil agora esconde ruído visual de verdade
+- A classe `.easy-mode-hide` existia no CSS desde a primeira rodada, mas
+  nenhum componente a usava — o toggle mudava o estado, mas nada
+  desaparecia na tela. Agora ela é aplicada na faixa de estatísticas de
+  marketing (`Stats`) e na grade de números técnicos do painel de status
+  (`StatusPanel`), que são informações de "bom saber" e não afetam a
+  conclusão de nenhuma tarefa do cidadão.
+
 ## O que ainda vale revisar/fazer (backlog, listado também no SECURITY.md)
 - Migrar os dois usos de `document::eval` para bindings tipados, pra poder
   tirar `'unsafe-eval'` do CSP.

@@ -47,7 +47,11 @@ pub fn StatusPanel() -> Element {
                 }
             }
 
-            div { class: "grid sm:grid-cols-2 lg:grid-cols-4 gap-4",
+            // easy-mode-hide: mantém o título e a explicação (o nav item "Status"
+            // continua levando a algo visível), mas esconde a grade de números
+            // detalhados — informação de transparência institucional, não algo
+            // que o cidadão precisa pra concluir uma tarefa.
+            div { class: "easy-mode-hide grid sm:grid-cols-2 lg:grid-cols-4 gap-4",
                 for ind in indicators {
                     div { class: "bg-govbr-gray-bg rounded p-6 text-center",
                         Icon { kind: ind.icon, class: "w-8 h-8 text-govbr-green mx-auto" }

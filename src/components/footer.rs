@@ -1,6 +1,5 @@
 use dioxus::prelude::*;
 
-<<<<<<< HEAD
 use crate::components::{Icon, IconKind};
 use crate::ui_state::UiPanels;
 
@@ -17,14 +16,6 @@ use crate::ui_state::UiPanels;
 #[component]
 pub fn Footer() -> Element {
     let mut ui = use_context::<UiPanels>();
-=======
-use crate::i18n::{t, I18n};
-
-#[component]
-pub fn Footer() -> Element {
-    let i18n = use_context::<I18n>();
-    let locale = (i18n.locale)();
->>>>>>> c09a621e3ecc8da34ca00dd2db84b30738ee7099
 
     rsx! {
         footer { id: "ajuda", class: "scroll-mt-16 bg-govbr-blue-dark",
@@ -38,12 +29,12 @@ pub fn Footer() -> Element {
                             span { class: "text-lg font-bold text-govbr-yellow", ".br" }
                         }
                         p { class: "text-sm text-govbr-blue-soft leading-relaxed",
-                            {t(locale, "footer.tagline")}
+                            "Portal digital de serviços, mais tecnológico, seguro e simples para o cidadão."
                         }
                     }
 
                     div {
-                        h4 { class: "text-xs font-bold uppercase tracking-wide text-white mb-4", {t(locale, "footer.about_title")} }
+                        h4 { class: "text-xs font-bold uppercase tracking-wide text-white mb-4", "Sobre o Governo" }
                         ul { class: "space-y-2 text-sm text-govbr-blue-soft",
                             for label in ["Órgãos do governo", "Acesso à informação", "Dados abertos", "Eixos temáticos", "Painel de monitoramento"] {
                                 li {
@@ -58,7 +49,7 @@ pub fn Footer() -> Element {
                     }
 
                     div {
-                        h4 { class: "text-xs font-bold uppercase tracking-wide text-white mb-4", {t(locale, "footer.programs_title")} }
+                        h4 { class: "text-xs font-bold uppercase tracking-wide text-white mb-4", "Ações e Programas" }
                         ul { class: "space-y-2 text-sm text-govbr-blue-soft",
                             for label in ["Notícias", "Participe", "Legislação", "Ouvidoria (Fala.BR)"] {
                                 li {
@@ -73,7 +64,7 @@ pub fn Footer() -> Element {
                     }
 
                     div {
-                        h4 { class: "text-xs font-bold uppercase tracking-wide text-white mb-4", {t(locale, "footer.help_title")} }
+                        h4 { class: "text-xs font-bold uppercase tracking-wide text-white mb-4", "Ajuda" }
                         ul { class: "space-y-2 text-sm text-govbr-blue-soft",
                             li {
                                 button {
@@ -108,7 +99,7 @@ pub fn Footer() -> Element {
                     }
 
                     div {
-                        h4 { class: "text-xs font-bold uppercase tracking-wide text-white mb-4", {t(locale, "footer.legal_title")} }
+                        h4 { class: "text-xs font-bold uppercase tracking-wide text-white mb-4", "Legal" }
                         ul { class: "space-y-2 text-sm text-govbr-blue-soft",
                             for label in ["Termos de uso", "Política de privacidade (LGPD)", "Política de cookies"] {
                                 li {
@@ -124,7 +115,6 @@ pub fn Footer() -> Element {
                 }
 
                 div { class: "mt-12 pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4",
-<<<<<<< HEAD
                     p { class: "text-xs text-govbr-blue-soft", "© 2026 HackGOV. Projeto de demonstração — não é um site oficial do governo." }
                     div { class: "flex items-center gap-4 text-govbr-blue-soft",
                         for (icon , label) in [
@@ -141,15 +131,6 @@ pub fn Footer() -> Element {
                                 Icon { kind: icon, class: "w-5 h-5" }
                             }
                         }
-=======
-                    p { class: "text-xs text-govbr-blue-soft", {t(locale, "footer.copyright")} }
-                    div { class: "flex items-center gap-4 text-govbr-blue-soft text-sm",
-                        a { href: "#", class: "hover:text-govbr-yellow transition-colors", title: "X (Twitter)", "🐦" }
-                        a { href: "#", class: "hover:text-govbr-yellow transition-colors", title: "Facebook", "📘" }
-                        a { href: "#", class: "hover:text-govbr-yellow transition-colors", title: "Instagram", "📷" }
-                        a { href: "#", class: "hover:text-govbr-yellow transition-colors", title: "LinkedIn", "💼" }
-                        a { href: "#", class: "hover:text-govbr-yellow transition-colors", title: "YouTube", "▶️" }
->>>>>>> c09a621e3ecc8da34ca00dd2db84b30738ee7099
                     }
                 }
             }

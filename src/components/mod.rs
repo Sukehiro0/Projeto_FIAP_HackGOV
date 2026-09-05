@@ -1,7 +1,6 @@
 mod a11y_widget;
 mod alerts;
 mod assistant;
-mod auth_modal;
 mod categories;
 mod coming_soon;
 mod feedback;
@@ -21,7 +20,6 @@ mod urban_services;
 pub use a11y_widget::AccessibilityWidget;
 pub use alerts::AlertsBell;
 pub use assistant::Assistant;
-pub use auth_modal::AuthModal;
 pub use categories::Categories;
 pub use coming_soon::ComingSoonDialog;
 pub use feedback::FeedbackForm;

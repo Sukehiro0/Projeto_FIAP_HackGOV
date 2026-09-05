@@ -30,17 +30,15 @@ jobs:
       - name: Check formatting
         run: cargo fmt --all -- --check
 
-      - name: Clippy - web (deny warnings)
+      # Este projeto só tem as features "web", "desktop" e "mobile" (ver
+      # Cargo.toml) — não existe (e nunca existiu) uma feature "server" aqui.
+      # Os antigos passos "Clippy - server" / "Test - server" tentavam
+      # `--features server`, que o Cargo rejeita na hora. Removidos.
+      - name: Clippy (deny warnings)
         run: cargo clippy --all-targets -- -D warnings
 
-      - name: Clippy - server (deny warnings)
-        run: cargo clippy --all-targets --no-default-features --features server -- -D warnings
-
-      - name: Test - web
+      - name: Test
         run: cargo test --all-targets
-
-      - name: Test - server
-        run: cargo test --all-targets --no-default-features --features server
 
   frontend-assets:
     name: Tailwind CSS build

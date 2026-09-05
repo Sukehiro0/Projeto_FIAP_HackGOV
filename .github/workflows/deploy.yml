@@ -49,8 +49,18 @@ jobs:
       - name: Install dioxus-cli
         run: cargo install dioxus-cli --version 0.7.10 --locked
 
+      # `dx bundle` não tem uma flag `--base-path` (isso não existe na CLI da
+      # 0.7) — o jeito oficialmente documentado é setar `base_path` dentro do
+      # Dioxus.toml. Como o nome do repositório só é conhecido em tempo de
+      # execução do workflow, injetamos a linha via sed antes de buildar, em
+      # vez de tentar passar isso como argumento de linha de comando.
+      - name: Set base_path for GitHub Pages
+        run: |
+          sed -i 's|^\[web.app\]|[web.app]\nbase_path = "${{ github.event.repository.name }}"|' Dioxus.toml
+          cat Dioxus.toml
+
       - name: Bundle web app (release)
-        run: dx bundle --platform web --release --base-path ${{ github.event.repository.name }}
+        run: dx bundle --platform web --release
 
       - name: Copy index.html to 404.html (client-side routing fallback)
         run: cp target/dx/hackgov/release/web/public/index.html target/dx/hackgov/release/web/public/404.html

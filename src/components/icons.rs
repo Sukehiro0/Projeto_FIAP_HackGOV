@@ -95,7 +95,7 @@ pub fn Icon(
             "stroke-linecap": "round",
             "stroke-linejoin": "round",
             "aria-hidden": "true",
-            "focusable": "false",
+            focusable: "false",
             {icon_body(kind)}
         }
     }

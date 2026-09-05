@@ -45,3 +45,17 @@
     transform: translateY(0);
 }
 
+/* Modo fácil (acessibilidade avançada): mais espaçamento, botões maiores, menos ruído visual */
+.easy-mode {
+    line-height: 1.8 !important;
+}
+
+.easy-mode button,
+.easy-mode a {
+    min-height: 44px;
+}
+
+.easy-mode .easy-mode-hide {
+    display: none !important;
+}
+

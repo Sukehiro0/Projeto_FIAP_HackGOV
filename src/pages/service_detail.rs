@@ -8,70 +8,8 @@ use crate::routes::Route;
 #[derive(Clone, Copy, PartialEq)]
 enum FaceCheck {
     Idle,
-    /// Câmera ativa, rodando a detecção facial real no navegador (Shape Detection API).
-    Scanning,
     Failed,
     Resolved,
-}
-
-/// Roda a verificação facial real inteiramente no navegador via a Shape
-/// Detection API (`FaceDetector`). Nenhum frame de vídeo, imagem ou dado
-/// biométrico é enviado ao Rust ou ao servidor — só o resultado final
-/// (`success`/`no_face`/`denied`/`unsupported`) atravessa a fronteira JS/Rust.
-async fn run_face_detection() -> String {
-    let mut eval = document::eval(
-        r#"
-        (async () => {
-            if (!('FaceDetector' in window)) {
-                dioxus.send('unsupported');
-                return;
-            }
-            let stream;
-            try {
-                stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
-            } catch (e) {
-                dioxus.send('denied');
-                return;
-            }
-            const video = document.getElementById('face-video');
-            video.srcObject = stream;
-            try {
-                await video.play();
-            } catch (e) {
-                // alguns navegadores exigem interação do usuário; seguimos mesmo assim
-            }
-
-            const detector = new FaceDetector({ fastMode: true, maxDetectedFaces: 1 });
-            const canvas = document.createElement('canvas');
-            canvas.width = video.videoWidth || 320;
-            canvas.height = video.videoHeight || 240;
-            const ctx = canvas.getContext('2d');
-
-            let found = false;
-            const deadline = Date.now() + 8000;
-            while (Date.now() < deadline) {
-                try {
-                    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-                    const faces = await detector.detect(canvas);
-                    if (faces && faces.length > 0) {
-                        found = true;
-                        break;
-                    }
-                } catch (e) {
-                    // erro transitório de detecção: continua tentando até o prazo
-                }
-                await new Promise((r) => setTimeout(r, 300));
-            }
-
-            stream.getTracks().forEach((t) => t.stop());
-            video.srcObject = null;
-
-            dioxus.send(found ? 'success' : 'no_face');
-        })();
-        "#,
-    );
-    let result: Result<String, _> = eval.recv().await;
-    result.unwrap_or_else(|_| "error".to_string())
 }
 
 const PROCESS_STEPS: [&str; 6] = [
@@ -99,50 +37,8 @@ pub fn ServiceDetail(slug: String) -> Element {
     let mut confirmed = use_signal(|| false);
     let mut started = use_signal(|| false);
     let mut face_check = use_signal(|| FaceCheck::Idle);
-    let mut face_message = use_signal(String::new);
     let mut step = use_signal(|| 0usize);
     let mut simple_lang = use_signal(|| false);
-
-    // Dispara a detecção real sempre que entramos em estado "Scanning".
-    use_effect(move || {
-        if face_check() == FaceCheck::Scanning {
-            spawn(async move {
-                let result = run_face_detection().await;
-                match result.as_str() {
-                    "success" => {
-                        face_check.set(FaceCheck::Resolved);
-                        step.set(0);
-                    }
-                    "unsupported" => {
-                        face_message.set(
-                            "Seu navegador não tem suporte à verificação facial real. Use um método alternativo abaixo."
-                                .to_string(),
-                        );
-                        face_check.set(FaceCheck::Failed);
-                    }
-                    "denied" => {
-                        face_message.set(
-                            "Não conseguimos acessar sua câmera (permissão negada). Tente novamente ou use um método alternativo."
-                                .to_string(),
-                        );
-                        face_check.set(FaceCheck::Failed);
-                    }
-                    "no_face" => {
-                        face_message.set(
-                            "Não conseguimos identificar seu rosto a tempo. Tente novamente com boa iluminação."
-                                .to_string(),
-                        );
-                        face_check.set(FaceCheck::Failed);
-                    }
-                    _ => {
-                        face_message
-                            .set("Ocorreu um erro inesperado na verificação facial.".to_string());
-                        face_check.set(FaceCheck::Failed);
-                    }
-                }
-            });
-        }
-    });
 
     rsx! {
         div { class: "max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16",
@@ -227,52 +123,23 @@ pub fn ServiceDetail(slug: String) -> Element {
                         "Iniciar: {s.name}"
                     }
                 } else if s.needs_biometrics && face_check() != FaceCheck::Resolved {
-                    // Verificação facial real (Shape Detection API) com fallback (dor real relatada por usuários do gov.br)
+                    // Simulador de verificação facial com fallback (dor real relatada por usuários do gov.br)
                     div { class: "mt-8 border border-govbr-gray-border rounded-lg p-6 text-center",
                         if face_check() == FaceCheck::Idle {
                             Icon { kind: IconKind::Camera, class: "w-10 h-10 text-govbr-blue mx-auto" }
                             h2 { class: "mt-3 text-base font-semibold text-govbr-blue-dark", "Verificação facial necessária" }
-                            p { class: "mt-1 text-sm text-govbr-gray-text",
-                                "Vamos usar a câmera do seu dispositivo para confirmar sua identidade. Nenhuma imagem ou dado biométrico sai do seu navegador."
-                            }
+                            p { class: "mt-1 text-sm text-govbr-gray-text", "Precisamos confirmar sua identidade antes de continuar." }
                             button {
                                 class: "mt-4 text-sm font-semibold text-white bg-govbr-blue hover:bg-govbr-blue-light transition-colors rounded-full px-6 py-2.5",
-                                onclick: move |_| face_check.set(FaceCheck::Scanning),
-                                "📷 Verificar com a câmera"
-                            }
-                        } else if face_check() == FaceCheck::Scanning {
-                            span { class: "text-4xl", "📷" }
-                            h2 { class: "mt-3 text-base font-semibold text-govbr-blue-dark", "Analisando..." }
-                            p { class: "mt-1 text-sm text-govbr-gray-text", "Posicione seu rosto dentro da câmera. Isso pode levar alguns segundos." }
-                            video {
-                                id: "face-video",
-                                class: "mt-4 mx-auto rounded-lg border border-govbr-gray-border w-64 h-48 object-cover bg-black",
-                                autoplay: true,
-                                "muted": "true",
-                                "playsinline": "true",
-                            }
-                            p { class: "mt-2 text-xs text-govbr-gray-text",
-                                "🔒 A verificação acontece só no seu navegador — nenhuma imagem é enviada ou armazenada."
+                                onclick: move |_| face_check.set(FaceCheck::Failed),
+                                "Simular verificação facial"
                             }
                         } else {
-<<<<<<< HEAD
                             Icon { kind: IconKind::Warning, class: "w-10 h-10 text-amber-600 mx-auto" }
                             h2 { class: "mt-3 text-base font-semibold text-govbr-blue-dark", "O reconhecimento facial não funcionou" }
                             p { class: "mt-1 text-sm text-govbr-gray-text", "Sem problemas. Vamos tentar outra forma de confirmar sua identidade:" }
                             div { class: "flex flex-wrap justify-center gap-2 mt-4",
                                 for (icon , label) in ALT_VERIFICATIONS {
-=======
-                            span { class: "text-4xl", "⚠️" }
-                            h2 { class: "mt-3 text-base font-semibold text-govbr-blue-dark", "Não foi possível confirmar pela câmera" }
-                            p { class: "mt-1 text-sm text-govbr-gray-text", "{face_message}" }
-                            div { class: "flex flex-wrap justify-center gap-2 mt-4",
-                                button {
-                                    class: "text-sm font-semibold text-white bg-govbr-blue hover:bg-govbr-blue-light transition-colors rounded-full px-4 py-2",
-                                    onclick: move |_| face_check.set(FaceCheck::Scanning),
-                                    "🔄 Tentar novamente com a câmera"
-                                }
-                                for alt in ["🏦 Banco credenciado", "📧 E-mail", "📞 Telefone", "🏢 Atendimento presencial"] {
->>>>>>> c09a621e3ecc8da34ca00dd2db84b30738ee7099
                                     button {
                                         class: "flex items-center gap-2 text-sm font-medium text-govbr-blue border border-govbr-blue hover:bg-govbr-blue/5 transition-colors rounded-full px-4 py-2",
                                         onclick: move |_| {
