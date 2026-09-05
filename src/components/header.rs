@@ -14,13 +14,34 @@ struct NavItem {
 }
 
 const NAV_ITEMS: [NavItem; 7] = [
-    NavItem { label: "Serviços urbanos", href: "/#servicos-urbanos" },
-    NavItem { label: "Assistente", href: "/#assistente" },
-    NavItem { label: "Serviços", href: "/#servicos" },
-    NavItem { label: "Categorias", href: "/#categorias" },
-    NavItem { label: "Segurança", href: "/#seguranca" },
-    NavItem { label: "Status", href: "/#status" },
-    NavItem { label: "Ajuda", href: "/#ajuda" },
+    NavItem {
+        label: "Serviços urbanos",
+        href: "/#servicos-urbanos",
+    },
+    NavItem {
+        label: "Assistente",
+        href: "/#assistente",
+    },
+    NavItem {
+        label: "Serviços",
+        href: "/#servicos",
+    },
+    NavItem {
+        label: "Categorias",
+        href: "/#categorias",
+    },
+    NavItem {
+        label: "Segurança",
+        href: "/#seguranca",
+    },
+    NavItem {
+        label: "Status",
+        href: "/#status",
+    },
+    NavItem {
+        label: "Ajuda",
+        href: "/#ajuda",
+    },
 ];
 
 /// Header institucional, presente em todas as páginas (dentro do `AppLayout`).

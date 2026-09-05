@@ -1,6 +1,8 @@
 use dioxus::prelude::*;
 
-use crate::components::{Assistant, Categories, Hero, Security, Services, Stats, StatusPanel, UrbanServices};
+use crate::components::{
+    Assistant, Categories, Hero, Security, Services, Stats, StatusPanel, UrbanServices,
+};
 
 /// Página inicial: reúne busca, assistente, serviços, categorias, segurança e status.
 #[component]

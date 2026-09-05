@@ -81,10 +81,7 @@ pub enum IconKind {
 /// (ex.: "w-5 h-5 text-govbr-blue"); a cor do traço segue `currentColor`,
 /// então herda a cor de texto do elemento pai.
 #[component]
-pub fn Icon(
-    kind: IconKind,
-    #[props(default = "w-5 h-5".to_string())] class: String,
-) -> Element {
+pub fn Icon(kind: IconKind, #[props(default = "w-5 h-5".to_string())] class: String) -> Element {
     rsx! {
         svg {
             class: "{class} shrink-0",
@@ -95,7 +92,7 @@ pub fn Icon(
             "stroke-linecap": "round",
             "stroke-linejoin": "round",
             "aria-hidden": "true",
-            focusable: "false",
+            "focusable": "false",
             {icon_body(kind)}
         }
     }
