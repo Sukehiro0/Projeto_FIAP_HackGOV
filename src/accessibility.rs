@@ -5,8 +5,6 @@ use dioxus::prelude::*;
 pub struct A11ySettings {
     pub font_scale: Signal<i32>,
     pub high_contrast: Signal<bool>,
-    /// "Modo fácil": menos informação por tela, mais espaçamento, foco em passo a passo.
-    pub easy_mode: Signal<bool>,
 }
 
 impl A11ySettings {
@@ -14,7 +12,6 @@ impl A11ySettings {
         let settings = Self {
             font_scale: Signal::new(0),
             high_contrast: Signal::new(false),
-            easy_mode: Signal::new(false),
         };
         use_context_provider(|| settings)
     }
@@ -37,11 +34,6 @@ impl A11ySettings {
         let current = *self.high_contrast.read();
         self.high_contrast.set(!current);
     }
-
-    pub fn toggle_easy_mode(&mut self) {
-        let current = *self.easy_mode.read();
-        self.easy_mode.set(!current);
-    }
 }
 
 /// Aplica o zoom de fonte no elemento raiz via JS, reagindo a mudanças do signal.
@@ -56,6 +48,7 @@ pub fn use_apply_font_scale(font_scale: Signal<i32>) {
     });
 }
 
+<<<<<<< HEAD
 /// Lê um texto em voz alta usando a Web Speech API do navegador (suporte ao "Modo fácil").
 ///
 /// Segurança: hoje `text` só recebe conteúdo estático de `data.rs` (nunca
@@ -68,6 +61,9 @@ pub fn use_apply_font_scale(font_scale: Signal<i32>) {
 /// cidadão), o ideal é parar de montar JS por interpolação de string e
 /// passar o valor via `document::eval(...).send(...)` (canal tipado do
 /// Dioxus) em vez de `format!` — ver SECURITY.md, item "eval e injeção de JS".
+=======
+/// Lê um texto em voz alta usando a Web Speech API do navegador.
+>>>>>>> c09a621e3ecc8da34ca00dd2db84b30738ee7099
 pub fn speak(text: &str) {
     let escaped = text
         .replace('\\', "\\\\")

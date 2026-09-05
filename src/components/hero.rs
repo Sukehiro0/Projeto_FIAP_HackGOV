@@ -2,12 +2,15 @@ use dioxus::prelude::*;
 
 use crate::components::{Icon, IconKind};
 use crate::data::services;
+use crate::i18n::{t, I18n};
 use crate::routes::Route;
 
 /// Seção de busca principal da Home, com resultados em tempo real conforme o usuário digita.
 #[component]
 pub fn Hero() -> Element {
     let mut query = use_signal(String::new);
+    let i18n = use_context::<I18n>();
+    let locale = (i18n.locale)();
     let suggestions = [
         "Imposto de Renda",
         "CPF",
@@ -33,8 +36,13 @@ pub fn Hero() -> Element {
             div { class: "max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-14",
                 // Titulo simples estilo gov.br real (sem hero gigante)
                 div { class: "flex items-center gap-3 mb-8",
+<<<<<<< HEAD
                     Icon { kind: IconKind::Menu, class: "w-6 h-6 text-govbr-blue" }
                     h1 { class: "text-xl sm:text-2xl font-normal text-govbr-gray-text", "Serviços e Informações do Brasil" }
+=======
+                    span { class: "text-govbr-blue text-xl", "☰" }
+                    h1 { class: "text-xl sm:text-2xl font-normal text-govbr-gray-text", {t(locale, "hero.title")} }
+>>>>>>> c09a621e3ecc8da34ca00dd2db84b30738ee7099
                 }
 
                 // Barra de busca
@@ -42,7 +50,7 @@ pub fn Hero() -> Element {
                     div { class: "flex items-center gap-2 bg-white border border-govbr-gray-border focus-within:border-govbr-blue rounded-lg p-2 shadow-sm transition-colors",
                         input {
                             r#type: "text",
-                            placeholder: "O que você procura?",
+                            placeholder: t(locale, "hero.search_placeholder"),
                             class: "flex-1 bg-transparent text-govbr-blue-dark placeholder:text-govbr-gray-text/70 outline-none px-3 py-2.5",
                             value: "{query}",
                             oninput: move |e| query.set(e.value()),
@@ -50,8 +58,13 @@ pub fn Hero() -> Element {
                         button {
                             r#type: "submit",
                             class: "flex items-center justify-center w-10 h-10 rounded-full text-govbr-blue hover:bg-govbr-blue/10 transition-colors",
+<<<<<<< HEAD
                             "aria-label": "Buscar",
                             Icon { kind: IconKind::Search, class: "w-5 h-5" }
+=======
+                            "aria-label": t(locale, "hero.search_aria"),
+                            "🔍"
+>>>>>>> c09a621e3ecc8da34ca00dd2db84b30738ee7099
                         }
                     }
 
@@ -60,7 +73,7 @@ pub fn Hero() -> Element {
                         div { class: "absolute left-0 right-0 mt-2 bg-white rounded-lg shadow-xl border border-govbr-gray-border overflow-hidden z-10",
                             if results().is_empty() {
                                 p { class: "px-4 py-3 text-sm text-govbr-gray-text",
-                                    "Nenhum serviço encontrado para \"{query}\""
+                                    {t(locale, "hero.no_results")} " \"{query}\""
                                 }
                             } else {
                                 for r in results() {

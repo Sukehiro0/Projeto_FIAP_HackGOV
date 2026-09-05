@@ -308,6 +308,7 @@ pub fn services() -> Vec<Service> {
     ]
 }
 
+<<<<<<< HEAD
 /// Os 4 serviços de "Cidade e Serviços Urbanos", na ordem em que aparecem no
 /// banner de destaque da Home. Mantido separado de `services()` para o
 /// banner não depender da ordem/posição desses itens dentro da lista geral.
@@ -315,6 +316,36 @@ pub fn urban_services() -> Vec<Service> {
     services()
         .into_iter()
         .filter(|s| s.tag == "Cidade e Serviços Urbanos")
+=======
+/// Reconhecimento simples por palavras-chave (sem backend/LLM) usado pelo assistente:
+/// compara o texto livre digitado com as keywords cadastradas em cada serviço.
+///
+/// Keywords de uma palavra só (ex.: "ctps") exigem correspondência EXATA de palavra —
+/// isso evita falso positivo do tipo uma keyword curta como "ir" batendo dentro de uma
+/// palavra não relacionada como "carteira" (que contém as letras "ir"). Keywords com
+/// espaço (frases, ex.: "carteira de trabalho") usam correspondência por substring no
+/// texto completo, o que é seguro porque frases longas raramente aparecem por acaso
+/// dentro de outro texto.
+pub fn match_services(query: &str, services: &[Service]) -> Vec<Service> {
+    let q = query.trim().to_lowercase();
+    if q.is_empty() {
+        return Vec::new();
+    }
+    let words: Vec<&str> = q.split_whitespace().collect();
+    services
+        .iter()
+        .filter(|s| {
+            s.keywords.iter().any(|k| {
+                if k.contains(' ') {
+                    q.contains(k)
+                } else {
+                    words.contains(k)
+                }
+            })
+        })
+        .take(3)
+        .cloned()
+>>>>>>> c09a621e3ecc8da34ca00dd2db84b30738ee7099
         .collect()
 }
 
@@ -629,4 +660,120 @@ pub fn fraud_signals() -> Vec<FraudSignal> {
             ok: true,
         },
     ]
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    // --- Invariantes básicas dos dados mock ---------------------------------------
+
+    #[test]
+    fn services_is_not_empty_and_has_unique_slugs() {
+        let list = services();
+        assert!(!list.is_empty());
+
+        let mut slugs: Vec<&str> = list.iter().map(|s| s.slug).collect();
+        slugs.sort_unstable();
+        slugs.dedup();
+        assert_eq!(
+            slugs.len(),
+            list.len(),
+            "cada serviço deve ter um slug único"
+        );
+    }
+
+    #[test]
+    fn services_needing_biometrics_mention_facial_verification() {
+        for s in services().iter().filter(|s| s.needs_biometrics) {
+            assert!(
+                s.requirements.iter().any(|r| r.contains("facial")),
+                "serviço {} marca needs_biometrics mas não lista verificação facial nos requirements",
+                s.slug
+            );
+        }
+    }
+
+    #[test]
+    fn categories_alerts_and_life_areas_are_not_empty() {
+        assert!(!categories().is_empty());
+        assert!(!alerts().is_empty());
+        assert!(!life_areas().is_empty());
+        assert!(!attendance_points().is_empty());
+        assert!(!help_reasons().is_empty());
+        assert!(!fraud_signals().is_empty());
+    }
+
+    // --- fraud_level: faixas de decisão do "antifraude" ----------------------------
+
+    #[test]
+    fn fraud_level_boundaries() {
+        assert!(matches!(fraud_level(0), FraudRiskLevel::Normal));
+        assert!(matches!(fraud_level(30), FraudRiskLevel::Normal));
+        assert!(matches!(fraud_level(31), FraudRiskLevel::Monitoring));
+        assert!(matches!(fraud_level(60), FraudRiskLevel::Monitoring));
+        assert!(matches!(fraud_level(61), FraudRiskLevel::Verification));
+        assert!(matches!(fraud_level(80), FraudRiskLevel::Verification));
+        assert!(matches!(fraud_level(81), FraudRiskLevel::Blocked));
+        assert!(matches!(fraud_level(100), FraudRiskLevel::Blocked));
+    }
+
+    #[test]
+    fn fraud_risk_score_is_classified_as_monitoring() {
+        // fraud_risk_score() hoje retorna 34, que deve cair na faixa "Monitoring".
+        assert!(matches!(
+            fraud_level(fraud_risk_score()),
+            FraudRiskLevel::Monitoring
+        ));
+    }
+
+    // --- match_services: reconhecimento por palavras-chave do assistente -----------
+
+    #[test]
+    fn match_services_empty_or_blank_query_returns_nothing() {
+        let list = services();
+        assert!(match_services("", &list).is_empty());
+        assert!(match_services("   ", &list).is_empty());
+    }
+
+    #[test]
+    fn match_services_matches_single_word_keyword_by_whole_word() {
+        let list = services();
+        let result = match_services("ctps", &list);
+        assert_eq!(result.len(), 1);
+        assert_eq!(result[0].slug, "carteira-trabalho");
+    }
+
+    #[test]
+    fn match_services_matches_multi_word_phrase_keyword() {
+        let list = services();
+        let result = match_services("perdi minha carteira de motorista", &list);
+        assert_eq!(result.len(), 1);
+        assert_eq!(result[0].slug, "cnh-digital");
+    }
+
+    /// Regressão: uma keyword curta como "ir" não pode "vazar" e casar dentro de uma
+    /// palavra não relacionada que só contém essas letras por acaso (ex.: "carteIRa").
+    /// A keyword real associada a "ir" é a frase "ir 2026", então uma consulta que não
+    /// contém essa frase exata não deve casar com `entregar-imposto-renda`.
+    #[test]
+    fn match_services_does_not_false_positive_on_substring_of_short_keyword() {
+        let list = services();
+        let result = match_services("perdi minha carteira de trabalho", &list);
+        assert!(
+            result.iter().all(|s| s.slug != "entregar-imposto-renda"),
+            "consulta sobre carteira de trabalho não deveria casar com entregar-imposto-renda"
+        );
+        assert!(result.iter().any(|s| s.slug == "carteira-trabalho"));
+    }
+
+    #[test]
+    fn match_services_respects_take_3_limit() {
+        // "conta gov.br ativa" aparece nos requirements (não keywords) de vários
+        // serviços; aqui garantimos apenas que o resultado nunca ultrapassa 3 itens,
+        // não importa quantos serviços a keyword combine.
+        let list = services();
+        let result = match_services("passaporte cnh carteira de trabalho restituição", &list);
+        assert!(result.len() <= 3);
+    }
 }

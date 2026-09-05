@@ -251,9 +251,12 @@
   .top-0 {
     top: calc(var(--spacing) * 0);
   }
+<<<<<<< HEAD
   .top-2 {
     top: calc(var(--spacing) * 2);
   }
+=======
+>>>>>>> c09a621e3ecc8da34ca00dd2db84b30738ee7099
   .-right-0\.5 {
     right: calc(var(--spacing) * -0.5);
   }
@@ -365,6 +368,12 @@
   .contents {
     display: contents;
   }
+  .block {
+    display: block;
+  }
+  .contents {
+    display: contents;
+  }
   .flex {
     display: flex;
   }
@@ -380,9 +389,12 @@
   .inline-flex {
     display: inline-flex;
   }
+<<<<<<< HEAD
   .h-0 {
     height: calc(var(--spacing) * 0);
   }
+=======
+>>>>>>> c09a621e3ecc8da34ca00dd2db84b30738ee7099
   .h-2 {
     height: calc(var(--spacing) * 2);
   }
@@ -415,6 +427,9 @@
   }
   .h-16 {
     height: calc(var(--spacing) * 16);
+  }
+  .h-48 {
+    height: calc(var(--spacing) * 48);
   }
   .h-full {
     height: 100%;
@@ -464,8 +479,13 @@
   .w-12 {
     width: calc(var(--spacing) * 12);
   }
+<<<<<<< HEAD
   .w-14 {
     width: calc(var(--spacing) * 14);
+=======
+  .w-64 {
+    width: calc(var(--spacing) * 64);
+>>>>>>> c09a621e3ecc8da34ca00dd2db84b30738ee7099
   }
   .w-80 {
     width: calc(var(--spacing) * 80);
@@ -722,6 +742,18 @@
       background-color: color-mix(in oklab, var(--color-white) 10%, transparent);
     }
   }
+<<<<<<< HEAD
+=======
+  .bg-white\/20 {
+    background-color: color-mix(in srgb, #fff 20%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      background-color: color-mix(in oklab, var(--color-white) 20%, transparent);
+    }
+  }
+  .object-cover {
+    object-fit: cover;
+  }
+>>>>>>> c09a621e3ecc8da34ca00dd2db84b30738ee7099
   .p-2 {
     padding: calc(var(--spacing) * 2);
   }
@@ -1147,7 +1179,16 @@
       white-space: normal;
     }
   }
+<<<<<<< HEAD
   .focus\:absolute {
+=======
+  .focus\:border-govbr-blue {
+    &:focus {
+      border-color: var(--color-govbr-blue);
+    }
+  }
+  .focus\:px-2 {
+>>>>>>> c09a621e3ecc8da34ca00dd2db84b30738ee7099
     &:focus {
       position: absolute;
     }
@@ -1202,6 +1243,14 @@
   .disabled\:opacity-60 {
     &:disabled {
       opacity: 60%;
+<<<<<<< HEAD
+=======
+    }
+  }
+  .sm\:flex {
+    @media (width >= 40rem) {
+      display: flex;
+>>>>>>> c09a621e3ecc8da34ca00dd2db84b30738ee7099
     }
   }
   .sm\:inline {
@@ -1365,6 +1414,7 @@
   opacity: 1;
   transform: translateY(0);
 }
+<<<<<<< HEAD
 .easy-mode {
   line-height: 1.8 !important;
 }
@@ -1374,6 +1424,8 @@
 .easy-mode .easy-mode-hide {
   display: none !important;
 }
+=======
+>>>>>>> c09a621e3ecc8da34ca00dd2db84b30738ee7099
 @property --tw-space-y-reverse {
   syntax: "*";
   inherits: false;

@@ -1,7 +1,11 @@
 use dioxus::prelude::*;
 
+<<<<<<< HEAD
 use crate::components::{Icon, IconKind};
 use crate::data::services;
+=======
+use crate::data::{match_services, services};
+>>>>>>> c09a621e3ecc8da34ca00dd2db84b30738ee7099
 use crate::routes::Route;
 
 /// "O que você precisa fazer hoje?": busca em linguagem natural que interpreta
@@ -18,30 +22,9 @@ pub fn Assistant() -> Element {
         "Como tiro passaporte?",
     ];
 
-    // Reconhecimento simples por palavras-chave (sem backend/LLM): compara o texto
-    // livre digitado com as keywords cadastradas em cada serviço. Keywords de uma
-    // palavra só exigem correspondência exata de palavra (evita falso positivo tipo
-    // "ir" batendo dentro de "carteira").
-    let matches = use_memo(move || {
-        let q = question().trim().to_lowercase();
-        if q.is_empty() {
-            return Vec::new();
-        }
-        let words: Vec<&str> = q.split_whitespace().collect();
-        services()
-            .into_iter()
-            .filter(|s| {
-                s.keywords.iter().any(|k| {
-                    if k.contains(' ') {
-                        q.contains(k)
-                    } else {
-                        words.contains(k)
-                    }
-                })
-            })
-            .take(3)
-            .collect::<Vec<_>>()
-    });
+    // O reconhecimento por palavras-chave em si é uma função pura testável em
+    // `crate::data::match_services` — aqui só conectamos o texto digitado (Signal) a ela.
+    let matches = use_memo(move || match_services(&question(), &services()));
 
     rsx! {
         section { id: "assistente", class: "reveal scroll-mt-16 bg-govbr-blue-dark",
